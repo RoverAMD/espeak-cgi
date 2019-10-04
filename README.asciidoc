@@ -1,0 +1,46 @@
+= espeak-cgi
+
+This CGI script (written in Tcl) is a wrapper around espeak-ng tool. It is useful if you need a TTS engine for your web app and you want to host it yourself, right on your server.
+
+_SCRIPT DOES NOT WORK ON WINDOWS_
+
+== Installation on RedHat Enterprise 8
+
+Downlad and install ActiveTcl 8.6 from ActiveState into ``/opt/ActiveTcl-8.6``: http://downloads.activestate.com/ActiveTcl/releases/8.6.9.0/
+
+Copy over ``say.tcl`` to ``/var/www/cgi-bin``, then chmod it to make it executable.
+
+Obviously, also install ``espeak-ng`` (it is already preinstalled if you have GNOME installed).
+
+== Usage
+
+The script accepts the following arguments:
+
+[squares]
+- ``text=[text encoded in base64]`` - specifies the text to speak. The value must be the base64 of the string with ``+`` replaced with ``-`` and ``/`` replaced with ``_`` (http base64). Useful if you are trying to speak text the language of which is other than English.
+- ``textp=[English text]`` - specifies the text to speak. It is not needed to convert it to base64. However, the specified text must be in English, otherwise, this won't work.
+- ``voice=[voice]`` - specifies the voice to use. Default value is ``en-us``.
+- ``pitch=[number from 0 to 100]`` - specifies espeak pitch. Default value is 78.
+
+The script throws only two types of HTTP errors - 200 and 500. When 200 is returned, this means that everything is fine and the resulting wav file is returned. Otherwise, the text of the error is returned.
+
+== Example 
+
+Contents of ``index.html``:
+
+[source,html]
+----
+<script>
+function sayHi() {
+	let txt = document.getElementById('tbox').value;
+	let base = btoa(txt).replace('+', '-').replace('/', '_');
+	new Audio('/cgi-bin/say.tcl?text=' + txt + '&v=en-us').play()
+}
+</script>
+<p>Type something: <input type=text id=tbox /></p>
+<button onclick="sayHi()">Say it</button>
+----
+
+== License
+
+As always, MIT License
