@@ -1,4 +1,4 @@
-#!/opt/ActiveTcl-8.6/bin/tclsh
+#!/usr/bin/env tclsh
 package require base64
 
 proc since {listing {index 1}} {
